@@ -18,6 +18,10 @@ export function Index() {
     navigate('/login');
   }
 
+  const boardHandle = () => {
+      navigate('/boards');
+  }
+
   return (
     <Box>
       <Box height="auto"
@@ -25,14 +29,14 @@ export function Index() {
            display="flex"
            padding="10px 20px"
            justifyContent="space-between">
-        <Button colorScheme='green'>Мои доски</Button>
+        <Button colorScheme='green' onClick={boardHandle}>Мои доски</Button>
         <Menu>
           <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
             {user.firstName} {user.lastName}
           </MenuButton>
           <MenuList>
             <MenuItem>Профиль</MenuItem>
-            <MenuItem>Доски</MenuItem>
+            <MenuItem onClick={boardHandle}>Доски</MenuItem>
             <MenuItem onClick={logOut}>Выйти</MenuItem>
           </MenuList>
         </Menu>

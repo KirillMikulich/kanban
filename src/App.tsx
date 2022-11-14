@@ -6,6 +6,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "./store/hooks";
 import { updateUserInfo } from "./store/slices/user";
 import { Index } from './pages/layout/Index';
+import { Boards } from "./components/Boards/Boards";
 
 function App() {
   const navigate = useNavigate();
@@ -32,6 +33,8 @@ function App() {
     <Box width="100%" height="100vh" >
       <Routes>
         <Route path="/" element={<Index/>}>
+          <Route path="/boards" element={<Boards/>}></Route>
+          <Route path="/boards/:id"></Route>
         </Route>
         <Route  path="/login" element={<Login/>}></Route>
       </Routes>
