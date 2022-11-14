@@ -9,19 +9,20 @@ export function Boards() {
   const [boards, setBoards] = React.useState<IShortBoard[]>([]);
 
   React.useEffect(() => {
-    getShortBoards();
-  });
+    getShortBoards().then((res: any) => {
+      if (res.data) {
+        setBoards(res.data);
+      }
+    })
+  }, []);
 
-  const getShortBoards = async () => {
-    const response: any = await fetchWithAuth('/board/get-boards-by-user', {
+  const getShortBoards = () => {
+    return fetchWithAuth('/board/get-boards-by-user', {
       ...REQUEST_CONFIG,
       method: 'GET'
     });
-
-    if (response.data) {
-      setBoards(response.data);
-    }
   }
+
 
   return (
     <Box>
