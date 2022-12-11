@@ -1,11 +1,10 @@
 import { Box } from "@chakra-ui/react";
-import { useAppSelector } from "../../store/hooks";
 import React from "react";
 import { IShortBoard } from "../../types/boards";
 import { fetchWithAuth, REQUEST_CONFIG } from "../../api";
+import BoardItem from "../BoardItem/BoardItem";
 
 export function Boards() {
-  const user = useAppSelector(({user}) => user);
   const [boards, setBoards] = React.useState<IShortBoard[]>([]);
 
   React.useEffect(() => {
@@ -25,11 +24,9 @@ export function Boards() {
 
 
   return (
-    <Box>
+    <Box display='flex' flexDirection='row' width='100%' height='100%' flexWrap='wrap' padding='20px'>
       {
-        boards?.length && boards.map((board) => <div key={board.id}>
-          {board.id} {board.name}
-        </div>)
+        boards?.length && boards.map((board) => <BoardItem key={board.id} board={board} />)
       }
     </Box>
   );

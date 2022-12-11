@@ -40,7 +40,7 @@ export function refreshToken() {
   })
     .then((res) => {
       if (res.status === 200) {
-        sessionStorage.setItem('token', res.data.JwtToken);
+        localStorage.setItem('token', res.data.jwtToken);
         return res.data;
       }
       return Promise.reject();

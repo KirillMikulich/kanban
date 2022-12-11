@@ -7,6 +7,7 @@ import { useAppDispatch } from "./store/hooks";
 import { updateUserInfo } from "./store/slices/user";
 import { Index } from './pages/layout/Index';
 import { Boards } from "./components/Boards/Boards";
+import { Board } from "./components/Board/Board";
 
 function App() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Index/>}>
           <Route path="/boards" element={<Boards/>}></Route>
-          <Route path="/boards/:id"></Route>
+          <Route path="/boards/:id" element={<Board/>}></Route>
         </Route>
         <Route  path="/login" element={<Login/>}></Route>
       </Routes>
