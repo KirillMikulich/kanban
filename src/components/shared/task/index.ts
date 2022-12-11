@@ -21,7 +21,8 @@ export const Wrapper = styled.div<{isDraggingOver: any, isDraggingFrom: any, isD
   padding-bottom: 0;
   transition: background-color 0.2s ease, opacity 0.1s ease;
   user-select: none;
-  width: 250px;
+  min-width: 250px;
+  width: auto;
 `;
 
 export const ScrollContainer = styled.div`

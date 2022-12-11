@@ -25,6 +25,8 @@ export const Header = styled.div<{ isDragging: boolean }>`
 export const Container = styled.div`
   margin: ${grid}px;
   display: flex;
+  min-width: 250px;
+  width: auto;
   flex-direction: column;
 `;
 
