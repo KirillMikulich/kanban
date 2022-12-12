@@ -3,6 +3,9 @@ import { DraggableProvided } from "react-beautiful-dnd";
 import { ITask } from "../../types/tasks";
 
 import { Container, Content } from "../shared/task/item";
+import { DeleteIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { TaskAddContext } from "./Board";
+import { Box } from "@chakra-ui/react";
 
 type Props = {
   quote: ITask,
@@ -11,12 +14,14 @@ type Props = {
   isClone?: boolean,
   isGroupedOver?: boolean,
   index: number,
+  deleteTask: Function
 };
 
-export const TaskItem: React.FC<Props> = ({quote, isDragging, provided, isClone, isGroupedOver, index}) => {
+export const TaskItem: React.FC<Props> = ({quote, isDragging, provided, isClone, isGroupedOver, index, deleteTask}) => {
+  const openWindow = React.useContext(TaskAddContext);
+
   return (
-    <Container href={''}
-               isDragging={isDragging}
+    <Container isDragging={isDragging}
                isGroupedOver={isGroupedOver}
                isClone={isClone}
                colors={''}
@@ -29,8 +34,13 @@ export const TaskItem: React.FC<Props> = ({quote, isDragging, provided, isClone,
                data-index={index}
                aria-label={`${'quote.author.name'} quote ${'quote.content'}`}>
       <Content>
-        {quote.name}
-        {quote.description}
+        <div>
+          {quote.name}
+        </div>
+        <Box>
+          <DeleteIcon onClick={e => deleteTask(quote.id)} marginRight='5px'/>
+          <HamburgerIcon onClick={e => openWindow(quote)}/>
+        </Box>
       </Content>
     </Container>
   );

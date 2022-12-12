@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Input } from "@chakra-ui/react";
+import { Box, Button, Input, useDisclosure } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { fetchWithAuth, REQUEST_CONFIG } from "../../api";
 import { IBoard } from "../../types/boards";
@@ -10,15 +10,36 @@ import { IColumn } from "../../types/columns";
 import { useDroppable } from "../../hooks/useDroppable";
 import { Container, ParentContainer } from "../shared/board";
 import { Column } from "./Column";
+import { ITask } from "../../types/tasks";
+import { CustomModal } from "../Modal/CustomModal";
+
+
+export const TaskAddContext = React.createContext<Function>(() => {});
 
 export const Board: React.FC = () => {
   const user = useAppSelector(({user}) => user);
   const [board, setBoard] = React.useState<IBoard>();
 
   const [_columns, setColumns] = React.useState<IColumn[]>([]);
-  const [onDragEnd] = useDroppable(_columns, setColumns);
+
+
+  const loadBoard = () => {
+    fetchWithAuth(`/board/get-board-by-id?board-id=${id}`, {
+      ...REQUEST_CONFIG,
+      method: 'GET'
+    }).then((res: any) => {
+      if (res.data) {
+        setBoard(res.data);
+      }
+    });
+  }
+
+  const [onDragEnd] = useDroppable(_columns, setColumns, loadBoard);
 
   const [newColumn, setNewColumn] = React.useState<string>('');
+
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const params = useParams();
   const id = params.id;
@@ -32,16 +53,6 @@ export const Board: React.FC = () => {
       setColumns(board.columns);
   }, [board]);
 
-  const loadBoard = () => {
-    fetchWithAuth(`/board/get-board-by-id?board-id=${id}`, {
-      ...REQUEST_CONFIG,
-      method: 'GET'
-    }).then((res: any) => {
-      if (res.data) {
-        setBoard(res.data);
-      }
-    });
-  }
 
   const addToBoard = (email: string) => {
     fetchWithAuth(`/board/add-user-to-board-email?board-id=${id}&email=${email}`, {
@@ -62,7 +73,6 @@ export const Board: React.FC = () => {
   }
 
   const addColumn = () => {
-
     fetchWithAuth(`/column/create?board-id=${id}`, {
       ...REQUEST_CONFIG,
       method: 'POST',
@@ -94,17 +104,53 @@ export const Board: React.FC = () => {
     });
   }
 
-  const addTask = () => {
+  const [task, setTask] = React.useState<ITask | null>(null);
+  const [columnId, setColumnId] = React.useState<string | null>(null);
 
+  function  openWindow(columnId: string): void;
+  function  openWindow(task: ITask): void;
+  function  openWindow(value: any): void {
+
+    if (typeof value === 'string') {
+      setTask(null);
+      setColumnId(value);
+    }
+    if (typeof value === 'object') {
+      setTask(value);
+      setColumnId(null);
+    }
+
+    onOpen();
+  }
+
+  const onSave = (task: ITask) => {
+    onClose();
+    fetchWithAuth(`/task/create?column-id=${task.columnId}`, {
+      ...REQUEST_CONFIG,
+      method: 'POST',
+      data: {...task, id: task.id.length > 0 ? task.id : null}
+    }).then((res: any) => {
+      loadBoard();
+    });
+  }
+
+  const onDeleteTask = (taskId: string) => {
+    fetchWithAuth(`/task/delete?task-id=${taskId}`, {
+      ...REQUEST_CONFIG,
+      method: 'GET',
+    }).then((res: any) => {
+      loadBoard();
+    });
   }
 
   return (
-    <Box padding='20px'>
-      <Box>
-        { board && <Users users={board.participants} addUser={addToBoard} deleteUser={deleteUser}/> }
-      </Box>
+    <TaskAddContext.Provider value={openWindow}>
+      <Box padding='20px'>
+        <Box>
+          { board && <Users users={board.participants} addUser={addToBoard} deleteUser={deleteUser}/> }
+        </Box>
 
-      <Box padding='20px' height='100vh' width='100%'>
+        <Box padding='20px' height='100vh' width='100%'>
           <DragDropContext onDragEnd={onDragEnd}>
             <ParentContainer>
               <Droppable droppableId="board"
@@ -122,7 +168,8 @@ export const Board: React.FC = () => {
                                 title={value.name}
                                 tasks={value.tasks}
                                 deleteColumn={deleteColumn}
-                                saveEditColumnName={saveEditColumn}/>)
+                                saveEditColumnName={saveEditColumn}
+                                deleteTask={onDeleteTask}/>)
                     }
                     {provided.placeholder}
 
@@ -146,7 +193,9 @@ export const Board: React.FC = () => {
               </Droppable>
             </ParentContainer>
           </DragDropContext>
+        </Box>
       </Box>
-    </Box>
+      { isOpen && <CustomModal task={task} columnId={columnId} isOpen={isOpen} onClose={onClose} onSave={onSave} assignee={board?.participants}/> }
+    </TaskAddContext.Provider>
   );
 }

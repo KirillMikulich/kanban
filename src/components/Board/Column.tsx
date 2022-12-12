@@ -22,10 +22,10 @@ type Props = {
   tasks: ITask[],
   deleteColumn: Function,
   saveEditColumnName: Function,
-
+  deleteTask: Function
 }
 
-export const Column: React.FC<Props> = ({index,title, tasks, id, deleteColumn, saveEditColumnName}) => {
+export const Column: React.FC<Props> = ({index,title, tasks, id, deleteColumn, saveEditColumnName, deleteTask}) => {
   const [headerTitle, setTitle] = React.useState(title);
 
   function EditableControls() {
@@ -62,7 +62,7 @@ export const Column: React.FC<Props> = ({index,title, tasks, id, deleteColumn, s
                    {...provided.dragHandleProps}
                    aria-label={`${title} quote list`} >
               <Editable textAlign='center'
-                        fontSize='2xl'
+                        fontSize='15px'
                         display='flex'
                         flexDirection='row'
                         alignItems='center'
@@ -85,7 +85,8 @@ export const Column: React.FC<Props> = ({index,title, tasks, id, deleteColumn, s
           <TaskList listId={id}
                     listType="TASK"
                     style={{ backgroundColor: 'rgba(235, 236, 240, 100%)' }}
-                    tasks={tasks}/>
+                    tasks={tasks}
+                    deleteTask={deleteTask}/>
         </Container>
       )}
     </Draggable >

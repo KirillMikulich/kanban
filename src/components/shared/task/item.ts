@@ -14,7 +14,7 @@ const getBorderColor = (isDragging: boolean, authorColors: AuthorColors) =>
   isDragging ? authorColors.hard : 'transparent';
 
 
-export const Container = styled.a<{isDragging: boolean, colors: any, isGroupedOver: any, isClone: any}>`
+export const Container = styled.div<{isDragging: boolean, colors: any, isGroupedOver: any, isClone: any}>`
   border-radius: ${borderRadius}px;
   border: 2px solid transparent;
   border-color: ${(props) => getBorderColor(props.isDragging, props.colors)};
@@ -50,5 +50,6 @@ export const Content = styled.div`
   flex-grow: 1;
   flex-basis: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
 `;

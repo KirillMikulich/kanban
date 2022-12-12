@@ -11,6 +11,8 @@ import {
 import { Container, DropZone, Wrapper } from "../shared/task";
 import { Title } from "../shared/column";
 import { TaskItem } from "./TaskItem";
+import { Button } from "@chakra-ui/react";
+import { TaskAddContext } from "./Board";
 
 
 type Props = {
@@ -18,16 +20,19 @@ type Props = {
   listType: string,
   tasks: ITask[]
   style: Object,
+  deleteTask: Function
 };
 
 type InnerListProps = {
   dropProvided: DroppableProvided,
   quotes: ITask[],
   title: string | null,
+  deleteTask: Function
 };
 
 type TaskListProps = {
   quotes: ITask[],
+  deleteTask: Function
 };
 
 const InnerTaskList = React.memo(function InnerTaskList(props: TaskListProps): any {
@@ -44,6 +49,7 @@ const InnerTaskList = React.memo(function InnerTaskList(props: TaskListProps): a
           isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
           provided={dragProvided}
           index={quote.index}
+          deleteTask={props.deleteTask}
         />
       )}
     </Draggable>
@@ -58,7 +64,7 @@ function InnerList(props: InnerListProps) {
     <Container>
       {title}
       <DropZone ref={dropProvided.innerRef}>
-        <InnerTaskList quotes={quotes} />
+        <InnerTaskList quotes={quotes} deleteTask={props.deleteTask}/>
         {dropProvided.placeholder}
       </DropZone>
     </Container>
@@ -68,7 +74,10 @@ function InnerList(props: InnerListProps) {
 export const TaskList: React.FC<Props> = ({listId,
                                             listType,
                                             tasks,
-                                            style}) => {
+                                            style, deleteTask}) => {
+
+  const openWindow = React.useContext(TaskAddContext);
+
   return (
     <Droppable droppableId={listId}
                type={listType}
@@ -86,7 +95,9 @@ export const TaskList: React.FC<Props> = ({listId,
                  {...dropProvided.droppableProps}>
           <InnerList quotes={tasks}
                      title={''}
-                     dropProvided={dropProvided}/>
+                     dropProvided={dropProvided}
+                     deleteTask={deleteTask}/>
+          <Button colorScheme='green' marginBottom='5px' onClick={e => openWindow(listId)}>Добавить задачу</Button>
         </Wrapper>
       )}
     </Droppable>
